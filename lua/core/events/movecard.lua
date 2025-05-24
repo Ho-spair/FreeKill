@@ -3,8 +3,8 @@
 --- CardsMoveInfo 一组牌的移动信息
 ---@class CardsMoveInfo
 ---@field public ids integer[] @ 移动卡牌ID数组
----@field public from? ServerPlayer @ 移动来源玩家ID
----@field public to? ServerPlayer @ 移动终点玩家ID
+---@field public from? ServerPlayer @ 移动来源玩家
+---@field public to? ServerPlayer @ 移动终点玩家
 ---@field public toArea? CardArea @ 移动终点区域
 ---@field public moveReason? CardMoveReason @ 移动原因
 ---@field public proposer? ServerPlayer @ 移动执行者
@@ -45,6 +45,17 @@ MoveCardsData = TriggerData:subclass("MoveCardsData")
 ---@class MoveCardsEvent: TriggerEvent
 ---@field data MoveCardsData[]
 local MoveCardsEvent = TriggerEvent:subclass("MoveCardsEvent")
+
+function MoveCardsData:copy()
+  local copy = {}
+  for _, key in ipairs({
+    "moveInfo", "from", "to", "toArea", "moveReason", "proposer", "skillName", "moveVisible",
+    "specialName", "specialVisible", "drawPilePosition", "moveMark", "visiblePlayers"
+  }) do
+    copy[key] = self[key]
+  end
+  return copy
+end
 
 --- DrawData 关于摸牌的数据
 ---@class DrawDataSpec

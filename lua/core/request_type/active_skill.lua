@@ -42,6 +42,19 @@ end
 function ReqActiveSkill:setup(ignoreInteraction)
   local scene = self.scene
 
+  if Fk.skills[self.skill_name] and Fk.skills[self.skill_name].click_count then
+    self.player:addSkillUseHistory(self.skill_name, 1)
+    if ClientInstance then
+      ClientInstance:notifyUI("LogEvent", {
+        type = "PlaySkillSound",
+        name = self.skill_name,
+        i = -1,
+        general = self.player.general,
+        deputy = self.player.deputyGeneral,
+      })
+    end
+  end
+
   -- FIXME: 偷懒了，让修改interaction时的全局刷新功能复用setup 总之这里写的很垃圾
   if not ignoreInteraction then
     scene:removeItem("Interaction", "1")
@@ -75,7 +88,7 @@ function ReqActiveSkill:setSkillPrompt(skill, selected_cards)
   local prompt = skill.prompt
   if type(skill.prompt) == "function" then
     prompt = skill:prompt(self.player, selected_cards or self.pendings,
-      table.map(self.selected_targets, Util.Id2PlayerMapper))
+      table.map(self.selected_targets, Util.Id2PlayerMapper), self.extra_data or {})
   end
   if type(prompt) == "string" then
     self:setPrompt(prompt)
